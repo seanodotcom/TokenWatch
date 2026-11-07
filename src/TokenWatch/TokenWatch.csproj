@@ -7,7 +7,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
     <AssemblyName>TokenWatch</AssemblyName>
-    <Version>0.6.1</Version>
+    <Version>0.6.2</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <ApplicationIcon>Assets\TokenWatch.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>

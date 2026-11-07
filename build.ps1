@@ -74,6 +74,7 @@ foreach($edition in @('self-contained','framework-dependent')) {
         if($signature.Status -ne 'Valid'){throw "Signing failed: $name"}
     }
     Copy-Item -LiteralPath 'README.md','THIRD-PARTY-NOTICES.md' -Destination $package
+    if(Test-Path -LiteralPath 'docs'){Copy-Item -LiteralPath 'docs' -Destination $package -Recurse}
     Copy-Item -LiteralPath 'LICENSE' -Destination $package
     if(Test-Path -LiteralPath 'PRIVACY.md'){Copy-Item -LiteralPath 'PRIVACY.md' -Destination $package}
     $licenses=Join-Path $package 'licenses'
@@ -99,7 +100,7 @@ foreach($edition in @('self-contained','framework-dependent')) {
     if($unexpected.Count -gt 0){throw 'A package contains private or development files'}
     Invoke-NativeSmoke (Join-Path $extracted $name) $edition
     Copy-Item -LiteralPath $executable -Destination (Join-Path $release $name) -Force
-    foreach($file in @('README.md','THIRD-PARTY-NOTICES.md','PRIVACY.md','LICENSE','licenses')) {
+    foreach($file in @('README.md','THIRD-PARTY-NOTICES.md','PRIVACY.md','LICENSE','licenses','docs')) {
         $source=Join-Path $package $file
         if(Test-Path -LiteralPath $source){Copy-Item -LiteralPath $source -Destination $release -Recurse -Force}
     }

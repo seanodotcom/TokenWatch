@@ -1,5 +1,11 @@
 # Release notes
 
+## v0.6.2 — A simpler welcome
+
+- Lead the README with a friendly quick start, a plain explanation of both downloads and the roughly 1 MB framework-dependent executable, and short setup steps for each provider.
+- Move detailed protocol, troubleshooting and build notes into a separate reference.
+- State the existing MIT no-warranty terms in plain language in the README and Settings: provided AS IS, without warranties of any kind, express or implied; use at your own risk.
+
 ## v0.6.1 — MIT licensing
 
 - License TokenWatch's original code under MIT and include the complete license in both release ZIPs and the versioned executable folder.
