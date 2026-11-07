@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <AssemblyName>TokenWatch</AssemblyName>
+    <Version>0.6.1</Version>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <ApplicationIcon>Assets\TokenWatch.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <EnableCompressionInSingleFile Condition="'$(SelfContained)' != 'false'">true</EnableCompressionInSingleFile>
+    <!-- The UI is English-only; let framework messages fall back to English too. -->
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <DebugType>none</DebugType>
+    <!-- WPF owns startup and per-monitor DPI through app.manifest. Forms only supplies monitor metrics; its Application DPI analyzer does not apply. -->
+    <NoWarn>$(NoWarn);WFAC010;WFO0003</NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TokenWatch.Core\TokenWatch.Core.csproj" />
+    <PackageReference Include="System.Management" Version="8.0.0" />
+    <Resource Include="Assets\*.png" />
+    <Resource Include="Assets\TokenWatch.ico" />
+  </ItemGroup>
+</Project>

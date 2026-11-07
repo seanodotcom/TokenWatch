@@ -1,0 +1,24 @@
+.tools/
+**/bin/
+**/obj/
+artifacts/
+dist/
+*.settings.json
+*.user
+*.log
+
+# Local development material and account/configuration data
+/design/
+/scripts/PreviewLauncher/
+/.codex/
+/.agents/
+/.aws/
+.vs/
+.env
+.env.*
+!.env.example
+**/.credentials.json
+*.settings.json.*
+*.db
+*.sqlite
+*.sqlite3

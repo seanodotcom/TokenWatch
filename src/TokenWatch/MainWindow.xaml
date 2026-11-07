@@ -1,0 +1,111 @@
+<Window x:Class="TokenWatch.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:core="clr-namespace:TokenWatch.Core;assembly=TokenWatch.Core" xmlns:local="clr-namespace:TokenWatch"
+  Title="TokenWatch" Icon="Assets/TokenWatch.ico" Width="{x:Static core:WidgetGeometry.DefaultWidth}" Height="715" MinWidth="{x:Static core:WidgetGeometry.MinimumWidth}" MinHeight="1" MaxWidth="{x:Static core:WidgetGeometry.MaximumWidth}" MaxHeight="{x:Static core:WidgetGeometry.MaximumHeight}" SizeToContent="Manual" WindowStyle="None" ResizeMode="CanResize" AllowsTransparency="True" Background="Transparent" ShowInTaskbar="False"
+  UseLayoutRounding="True" TextOptions.TextFormattingMode="Display" TextOptions.TextRenderingMode="ClearType"
+  AutomationProperties.Name="TokenWatch usage widget" Deactivated="Window_Deactivated" SourceInitialized="Window_SourceInitialized" PreviewKeyDown="Window_PreviewKeyDown">
+  <Window.Resources>
+    <GridLength x:Key="QuotaTimeWidth">88</GridLength><GridLength x:Key="QuotaPercentWidth">45</GridLength><GridLength x:Key="CompactIconColumn">0</GridLength>
+    <Thickness x:Key="BodyMargin">17,0</Thickness><Thickness x:Key="HeaderMargin">17,16,14,13</Thickness>
+    <Thickness x:Key="ProviderPadding">0,14,0,7</Thickness><Thickness x:Key="QuotaMargin">0,0,0,8</Thickness>
+    <Style x:Key="ResizeEdge" TargetType="Thumb">
+      <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Thumb"><Border Background="#01000000"/></ControlTemplate></Setter.Value></Setter>
+      <EventSetter Event="DragStarted" Handler="Resize_Started"/><EventSetter Event="DragDelta" Handler="Resize_Delta"/><EventSetter Event="DragCompleted" Handler="Resize_Completed"/>
+    </Style>
+    <Style x:Key="HeaderButton" TargetType="Button" BasedOn="{StaticResource IconButton}"><Setter Property="Width" Value="{DynamicResource HeaderButtonWidth}"/><Setter Property="Height" Value="{DynamicResource HeaderButtonHeight}"/></Style>
+    <Style x:Key="QuotaText" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}"><Setter Property="FontSize" Value="{DynamicResource QuotaFontSize}"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="VerticalAlignment" Value="Center"/></Style>
+  </Window.Resources>
+  <Grid>
+    <Viewbox x:Name="WidgetScale" Stretch="Uniform" HorizontalAlignment="Left" VerticalAlignment="Top">
+      <Grid x:Name="WidgetCanvas" Width="410" UseLayoutRounding="False">
+        <Border Margin="8" CornerRadius="14" BorderThickness="1" BorderBrush="#526075">
+          <Border.Background><LinearGradientBrush StartPoint="0,0" EndPoint="0.6,1"><GradientStop Color="#252F3E" Offset="0"/><GradientStop Color="#191F2A" Offset="1"/></LinearGradientBrush></Border.Background>
+          <Border.Effect><DropShadowEffect BlurRadius="12" ShadowDepth="3" Opacity="0.24"/></Border.Effect>
+          <Grid>
+            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+            <Grid x:Name="HeaderLayout" Margin="{DynamicResource HeaderMargin}" Background="Transparent" MouseLeftButtonDown="Header_MouseLeftButtonDown">
+              <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+              <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <Grid x:Name="HeaderLogo" Width="26" Height="26" Margin="0,0,8,0" Background="Transparent" ToolTip="Connecting…" AutomationProperties.Name="Refresh countdown" ContextMenuOpening="CountdownMenu_Opening">
+                  <Grid.ContextMenu><ContextMenu x:Name="CountdownMenu" Closed="CountdownMenu_Closed" Background="#283446" BorderBrush="#586A83" Foreground="#F1F4FA" Padding="4">
+                    <ContextMenu.Template><ControlTemplate TargetType="ContextMenu"><Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="5" Padding="{TemplateBinding Padding}"><ScrollViewer CanContentScroll="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><ItemsPresenter KeyboardNavigation.DirectionalNavigation="Cycle"/></ScrollViewer></Border></ControlTemplate></ContextMenu.Template>
+                    <ContextMenu.Resources><Style TargetType="MenuItem"><Setter Property="Foreground" Value="#F1F4FA"/><Setter Property="Padding" Value="10,6"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="MenuItem"><Border x:Name="MenuSurface" Background="Transparent" CornerRadius="4" Padding="{TemplateBinding Padding}"><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="20"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><TextBlock x:Name="MenuCheck" Text="✓" Foreground="{TemplateBinding Foreground}" Visibility="Collapsed"/><TextBlock Grid.Column="1" Text="{TemplateBinding Header}" Foreground="{TemplateBinding Foreground}"/></Grid></Border><ControlTemplate.Triggers><Trigger Property="IsChecked" Value="True"><Setter TargetName="MenuCheck" Property="Visibility" Value="Visible"/></Trigger><Trigger Property="IsHighlighted" Value="True"><Setter TargetName="MenuSurface" Property="Background" Value="#465970"/></Trigger><Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.5"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style></ContextMenu.Resources>
+                  </ContextMenu></Grid.ContextMenu>
+                  <Viewbox RenderTransformOrigin="0.5,0.5"><Viewbox.RenderTransform><ScaleTransform x:Name="CountdownScale"/></Viewbox.RenderTransform><local:CountdownDonut x:Name="CountdownArc" Width="32" Height="32"/></Viewbox>
+                </Grid>
+                <Grid x:Name="HeaderNameSlot" Width="{DynamicResource TitleSlotWidth}" Height="26" VerticalAlignment="Center">
+                  <Viewbox x:Name="FullTitleView" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Left" VerticalAlignment="Center" Width="{DynamicResource TitleSlotWidth}" Height="26" Opacity="{DynamicResource HeaderFullTitleOpacity}"><TextBlock x:Name="HeaderTitle" Text="TokenWatch" FontSize="18" FontWeight="SemiBold"/></Viewbox>
+                  <Viewbox x:Name="CompactTitleView" Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Left" VerticalAlignment="Center" Width="{DynamicResource TitleSlotWidth}" Height="26" Opacity="{DynamicResource HeaderCompactTitleOpacity}"><TextBlock x:Name="HeaderCompactTitle" Text="TW" FontSize="18" FontWeight="SemiBold"/></Viewbox>
+                </Grid>
+                <TextBlock x:Name="VersionLabel" FontSize="10" Foreground="{StaticResource TextSecondary}" Margin="6,0,0,3" VerticalAlignment="Bottom" AutomationProperties.Name="Application version"/>
+              </StackPanel>
+              <StackPanel x:Name="HeaderActions" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                <Button x:Name="PinButton" Style="{StaticResource HeaderButton}" Click="Pin_Click" ToolTip="Always on top" AutomationProperties.Name="Always on top" Margin="0,0,3,0"><Path Width="15" Height="15" Stretch="Uniform" Data="M 8,2 L 14,8 L 11,9 L 9,14 L 6,11 L 1,16 M 6,11 L 2,7 L 7,5 Z" Stroke="{Binding Foreground,RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.7" StrokeLineJoin="Round"/></Button>
+                <Button Style="{StaticResource HeaderButton}" Click="Settings_Click" ToolTip="Settings" AutomationProperties.Name="Open settings"><TextBlock FontFamily="Segoe MDL2 Assets" FontSize="17" Text="&#xE713;" Foreground="{Binding Foreground,RelativeSource={RelativeSource AncestorType=Button}}"/></Button>
+                <Button Style="{StaticResource HeaderButton}" Click="Hide_Click" ToolTip="Hide to tray" AutomationProperties.Name="Hide widget"><Path Width="13" Height="13" Stretch="Uniform" Data="M 0,0 L 12,12 M 12,0 L 0,12" Stroke="{Binding Foreground,RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.6"/></Button>
+              </StackPanel>
+            </Grid>
+            <Border Grid.Row="1" BorderBrush="#344052" BorderThickness="0,1,0,0" Margin="{DynamicResource BodyMargin}">
+              <Grid>
+              <TextBlock x:Name="EmptyWidgetText" Text="Add a provider in Settings to start tracking usage." TextWrapping="Wrap" FontSize="13" Foreground="#B2C0D5" Margin="12,20" Visibility="Collapsed"/>
+              <ItemsControl x:Name="ProviderList" ItemsSource="{Binding}">
+                <ItemsControl.ItemsPanel><ItemsPanelTemplate><local:ProviderFlowPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate><DataTemplate>
+                  <Border Padding="{DynamicResource ProviderPadding}" BorderBrush="#344052" BorderThickness="0,0,0,1">
+                    <Grid>
+                      <Grid.ColumnDefinitions><ColumnDefinition Width="{DynamicResource CompactIconColumn}"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                      <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                      <Border x:Name="ProviderHeaderViewport" Grid.ColumnSpan="2" Height="{DynamicResource ProviderHeaderHeight}" Opacity="{DynamicResource ProviderHeaderOpacity}" ClipToBounds="True" IsHitTestVisible="{DynamicResource ProviderHeaderHitTest}">
+                        <Grid x:Name="ProviderHeaderContent" Height="30" VerticalAlignment="Top">
+                          <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                          <Image Source="{Binding Icon}" Width="29" Height="29" Margin="0,0,10,0" RenderOptions.BitmapScalingMode="HighQuality"/>
+                          <TextBlock Grid.Column="1" Text="{Binding Name}" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                          <Button Grid.Column="2" Command="{Binding OpenUsageCommand}" ToolTip="{Binding DetailsHint}" Style="{StaticResource IconButton}" Width="Auto" Padding="4" AutomationProperties.Name="Open provider details"><TextBlock Text="{Binding Status}" Foreground="{Binding StatusBrush}" FontSize="10" Margin="5,0"/></Button>
+                        </Grid>
+                      </Border>
+                      <Border Grid.Row="1" ClipToBounds="True" Opacity="{DynamicResource ProviderIconOpacity}" IsHitTestVisible="{DynamicResource ProviderIconHitTest}" VerticalAlignment="Top">
+                        <Button Command="{Binding OpenUsageCommand}" ToolTip="{Binding DetailsHint}" AutomationProperties.Name="{Binding DetailsHint}" Style="{StaticResource IconButton}" Width="30" Height="32" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,2,0,0">
+                          <Grid><Image Source="{Binding Icon}" Width="24" Height="24" RenderOptions.BitmapScalingMode="HighQuality"/><Ellipse Width="6" Height="6" Fill="{Binding StatusBrush}" Stroke="#252F3E" StrokeThickness="1" HorizontalAlignment="Right" VerticalAlignment="Bottom"/></Grid>
+                        </Button>
+                      </Border>
+                      <ItemsControl Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Rows}">
+                        <ItemsControl.ItemTemplate><DataTemplate>
+                          <StackPanel>
+                            <TextBlock Text="{Binding CompactGroupHeading}" Visibility="{Binding HeadingVisibility}" Foreground="#B3C0D3" FontWeight="SemiBold" FontSize="{DynamicResource GroupFontSize}" Margin="{DynamicResource GroupMargin}"/>
+                            <Grid Margin="{DynamicResource QuotaMargin}" ToolTip="{Binding Description}" AutomationProperties.Name="{Binding Description}" Opacity="{Binding Opacity}">
+                              <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                              <Grid.ColumnDefinitions><ColumnDefinition Width="{DynamicResource QuotaTimeWidth}"/><ColumnDefinition Width="*"/><ColumnDefinition Width="{DynamicResource QuotaPercentWidth}"/></Grid.ColumnDefinitions>
+                              <Border Grid.ColumnSpan="3" Grid.RowSpan="2" Margin="-4,-2,-4,-2" CornerRadius="4" Background="{Binding HighlightBrush,NotifyOnTargetUpdated=True}" TargetUpdated="QuotaHighlight_TargetUpdated" Opacity="0" Loaded="QuotaHighlight_Loaded" IsVisibleChanged="QuotaHighlight_VisibilityChanged" IsHitTestVisible="False"/>
+                              <TextBlock Text="{Binding PrimaryText}" Style="{StaticResource QuotaText}" TextTrimming="CharacterEllipsis" Margin="0,0,4,0"/>
+                              <Grid Grid.Column="1" Margin="0,0,7,0" MinHeight="18">
+                                <ProgressBar Value="{Binding Value,Mode=OneWay}" Maximum="100" Foreground="{Binding Accent}" Height="{DynamicResource QuotaBarHeight}" VerticalAlignment="Top" Margin="0,2,0,0"/>
+                                <local:QuotaPaceMarker Percent="{Binding PacePercent}" Visibility="{Binding PaceVisibility}" Height="18" VerticalAlignment="Top" IsHitTestVisible="False"/>
+                              </Grid>
+                              <TextBlock Grid.Column="2" Text="{Binding Percent}" Foreground="{Binding PercentBrush}" Style="{StaticResource QuotaText}" TextAlignment="Right"/>
+                              <Border Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Height="{DynamicResource QuotaCaptionHeight}" Opacity="{DynamicResource QuotaCaptionOpacity}" Visibility="{Binding ResetVisibility}" ClipToBounds="True">
+                                <TextBlock Text="{Binding Label}" FontSize="10" Foreground="{StaticResource TextSecondary}" Margin="0,3,0,0" VerticalAlignment="Top" TextTrimming="CharacterEllipsis"/>
+                              </Border>
+                            </Grid>
+                          </StackPanel>
+                        </DataTemplate></ItemsControl.ItemTemplate>
+                      </ItemsControl>
+                      <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding Message}" ToolTip="{Binding DetailsHint}" Foreground="{StaticResource TextSecondary}" FontSize="10" Visibility="{Binding MessageVisibility}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Height="{DynamicResource ProviderMessageHeight}" Opacity="{DynamicResource ProviderMessageOpacity}"/>
+                    </Grid>
+                  </Border>
+                </DataTemplate></ItemsControl.ItemTemplate>
+              </ItemsControl>
+              </Grid>
+            </Border>
+            <TextBlock x:Name="SettingsError" Grid.Row="2" Visibility="Collapsed" FontSize="10" Foreground="#E9BB72" TextWrapping="Wrap" Margin="17,6,17,10"/>
+          </Grid>
+        </Border>
+      </Grid>
+    </Viewbox>
+    <Thumb Style="{StaticResource ResizeEdge}" Tag="Left" Cursor="SizeWE" Width="8" HorizontalAlignment="Left" Margin="0,14,0,14" AutomationProperties.Name="Resize left edge"/>
+    <Thumb Style="{StaticResource ResizeEdge}" Tag="Right" Cursor="SizeWE" Width="8" HorizontalAlignment="Right" Margin="0,14,0,14" AutomationProperties.Name="Resize right edge"/>
+    <Thumb Style="{StaticResource ResizeEdge}" Tag="Top" Cursor="SizeNS" Height="8" VerticalAlignment="Top" Margin="14,0,14,0" AutomationProperties.Name="Resize top edge"/>
+    <Thumb Style="{StaticResource ResizeEdge}" Tag="Bottom" Cursor="SizeNS" Height="8" VerticalAlignment="Bottom" Margin="14,0,14,0" AutomationProperties.Name="Resize bottom edge"/>
+    <Thumb Style="{StaticResource ResizeEdge}" Tag="TopLeft" Cursor="SizeNWSE" Width="14" Height="14" HorizontalAlignment="Left" VerticalAlignment="Top" AutomationProperties.Name="Resize top left corner"/>
+    <Thumb Style="{StaticResource ResizeEdge}" Tag="TopRight" Cursor="SizeNESW" Width="14" Height="14" HorizontalAlignment="Right" VerticalAlignment="Top" AutomationProperties.Name="Resize top right corner"/>
+    <Thumb Style="{StaticResource ResizeEdge}" Tag="BottomLeft" Cursor="SizeNESW" Width="14" Height="14" HorizontalAlignment="Left" VerticalAlignment="Bottom" AutomationProperties.Name="Resize bottom left corner"/>
+    <Thumb x:Name="ResizeCorner" Style="{StaticResource ResizeEdge}" Tag="BottomRight" Cursor="SizeNWSE" Width="14" Height="14" HorizontalAlignment="Right" VerticalAlignment="Bottom" AutomationProperties.Name="Resize bottom right corner"/>
+  </Grid>
+</Window>

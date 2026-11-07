@@ -1,0 +1,55 @@
+<Window x:Class="TokenWatch.SettingsWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Title="TokenWatch settings" Icon="Assets/TokenWatch.ico" Width="490" Height="730" ResizeMode="CanResize" MinWidth="430" MinHeight="500" WindowStartupLocation="CenterOwner" Background="#202937" Foreground="#EDF2FA" ShowInTaskbar="False" FontFamily="Segoe UI">
+  <Grid Margin="22"><Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><StackPanel>
+      <TextBlock Text="Settings" FontSize="22" FontWeight="SemiBold" Margin="0,0,0,20"/>
+      <TextBlock Text="PROVIDERS" FontSize="10" Foreground="#8FA3BF" Margin="0,0,0,8"/>
+      <TextBlock Text="Choose what appears in your widget. Uncheck a provider to pause it." TextWrapping="Wrap" FontSize="11" Foreground="{StaticResource TextSecondary}" Margin="0,0,0,10"/>
+      <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+        <ComboBox x:Name="ProviderCatalogPicker" DisplayMemberPath="Name" AutomationProperties.Name="Available providers"/>
+        <TextBlock x:Name="CatalogCompleteText" Text="All supported providers are added." TextWrapping="Wrap" FontSize="11" Foreground="#B2C0D5" VerticalAlignment="Center" Visibility="Collapsed"/>
+        <Button Grid.Column="1" x:Name="AddProviderButton" Content="Add provider" Style="{StaticResource ActionButton}" Click="AddProvider_Click" Margin="8,0,0,0"/>
+      </Grid>
+      <ListBox x:Name="ManagedProviderList" Margin="0,10,0,8" MinHeight="44" MaxHeight="205" Background="#18212E" Foreground="#EDF2FA" BorderThickness="0" SelectionChanged="Provider_SelectionChanged" AutomationProperties.Name="Your providers" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+        <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem"><Setter Property="HorizontalContentAlignment" Value="Stretch"/><Setter Property="Padding" Value="8,6"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem"><Border x:Name="Selection" Background="Transparent" Padding="{TemplateBinding Padding}"><ContentPresenter/></Border><ControlTemplate.Triggers><Trigger Property="IsSelected" Value="True"><Setter TargetName="Selection" Property="Background" Value="#35475E"/></Trigger><Trigger Property="IsKeyboardFocusWithin" Value="True"><Setter TargetName="Selection" Property="BorderBrush" Value="#8FA3BF"/><Setter TargetName="Selection" Property="BorderThickness" Value="1"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style></ListBox.ItemContainerStyle>
+        <ListBox.ItemTemplate><DataTemplate><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="24"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><CheckBox IsChecked="{Binding Enabled, Mode=TwoWay}" AutomationProperties.Name="{Binding Name}" Margin="0" VerticalAlignment="Center"/><TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center" FontSize="12"/><TextBlock Grid.Column="2" Text="{Binding Status}" FontSize="10" Foreground="#B2C0D5" VerticalAlignment="Center" Margin="10,0,0,0"/></Grid></DataTemplate></ListBox.ItemTemplate>
+      </ListBox>
+      <TextBlock x:Name="EmptyProvidersText" Text="No providers added. Choose one above to get started." FontSize="11" TextWrapping="Wrap" Foreground="#B2C0D5" Margin="0,0,0,8" Visibility="Collapsed"/>
+      <StackPanel Orientation="Horizontal"><Button x:Name="MoveUpButton" Content="Move up" Click="MoveUp_Click" Style="{StaticResource ActionButton}"/><Button x:Name="MoveDownButton" Content="Move down" Click="MoveDown_Click" Style="{StaticResource ActionButton}" Margin="6,0,0,0"/><Button x:Name="RemoveProviderButton" Content="Remove" Click="RemoveProvider_Click" Style="{StaticResource ActionButton}" Margin="6,0,0,0"/></StackPanel>
+      <StackPanel x:Name="ProviderDetailsPanel" Margin="0,16,0,0">
+        <TextBlock x:Name="SelectedProviderName" FontSize="16" FontWeight="SemiBold"/>
+        <TextBlock x:Name="SelectedProviderSetup" TextWrapping="Wrap" FontSize="11" Foreground="{StaticResource TextSecondary}" Margin="0,6,0,8"/>
+        <TextBlock x:Name="SelectedProviderStatus" TextWrapping="Wrap" FontSize="11" Foreground="#B2C0D5" Margin="0,0,0,8"/>
+        <StackPanel Orientation="Horizontal"><Button x:Name="CheckConnectionButton" Content="Check connection" Click="CheckConnection_Click" Style="{StaticResource ActionButton}"/><Button x:Name="UsagePageButton" Content="Open usage page" Click="UsagePage_Click" Style="{StaticResource ActionButton}" Margin="6,0,0,0"/></StackPanel>
+        <Button x:Name="ClaudeSignInButton" Content="Sign in to Claude" Style="{StaticResource ActionButton}" Click="ClaudeSignIn_Click" HorizontalAlignment="Left" Margin="0,8,0,0" Visibility="Collapsed"/>
+        <Button x:Name="GitHubSignInButton" Content="Sign in with GitHub CLI" Style="{StaticResource ActionButton}" Click="GitHubSignIn_Click" HorizontalAlignment="Left" Margin="0,8,0,0" Visibility="Collapsed"/>
+        <Button x:Name="OtherSignInButton" Content="Sign in" Style="{StaticResource ActionButton}" Click="OtherSignIn_Click" HorizontalAlignment="Left" Margin="0,8,0,0" Visibility="Collapsed"/>
+        <StackPanel x:Name="CodexOptions" Visibility="Collapsed" Margin="0,10,0,0"><TextBlock Text="Codex executable (optional)" FontSize="11" Margin="0,0,0,5"/><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBox x:Name="CodexPath" Padding="6" FontSize="10" VerticalContentAlignment="Center" AutomationProperties.Name="Codex executable path"/><Button Grid.Column="1" Content="Browse" Style="{StaticResource ActionButton}" Margin="6,0,0,0" Click="Browse_Click"/></Grid></StackPanel>
+      </StackPanel>
+      <Border CornerRadius="7" Background="#2A3546" Padding="12" Margin="0,16,0,0"><TextBlock Text="Sign-ins stay with their apps. Removing a provider only removes it from TokenWatch. No credentials, prompts or usage history are saved. Changes apply when you save." FontSize="11" Foreground="#B2C0D5" TextWrapping="Wrap"/></Border>
+      <Expander Header="Widget appearance and refresh" Foreground="#EDF2FA" Margin="0,16,0,0"><StackPanel Margin="0,12,0,0">
+      <TextBlock Text="WIDGET" FontSize="10" Foreground="#8FA3BF" Margin="0,0,0,6"/>
+      <CheckBox x:Name="PinnedOption" Content="Keep open when I click elsewhere"/>
+      <CheckBox x:Name="TopmostOption" Content="Always on top of other windows"/>
+      <TextBlock Text="Usage display" FontSize="12" Margin="0,15,0,8"/>
+      <StackPanel Orientation="Horizontal">
+        <RadioButton x:Name="ShowUsedOption" GroupName="UsageDisplay" Content="Show used" Foreground="#D6E0EF" FontSize="12" Margin="0,0,24,0" VerticalContentAlignment="Center"/>
+        <RadioButton x:Name="ShowRemainingOption" GroupName="UsageDisplay" Content="Show remaining" Foreground="#D6E0EF" FontSize="12" VerticalContentAlignment="Center"/>
+      </StackPanel>
+      <TextBlock Text="Applies to percentages and bars for all providers." TextWrapping="Wrap" FontSize="10" Foreground="{StaticResource TextSecondary}" Margin="0,6,0,0"/>
+      <CheckBox x:Name="ResetDetailsOption" Content="Show quota reset times and dates" Margin="0,14,0,4"/>
+      <TextBlock Text="Shows the reset time or date in large text, with the quota name below the bar. Hover for full reset details." TextWrapping="Wrap" FontSize="10" Foreground="{StaticResource TextSecondary}" Margin="20,0,0,0"/>
+      <CheckBox x:Name="PaceMarkersOption" Content="Show expected usage markers on weekly quotas" Margin="0,12,0,4"/>
+      <TextBlock Text="Daily usage budget (%)" FontSize="12" Margin="0,6,0,4"/>
+      <TextBox x:Name="DailyUsageBudget" Width="100" HorizontalAlignment="Left" Padding="6" AutomationProperties.Name="Daily usage budget percent"/>
+      <TextBlock Text="Expected usage by each weekday's close. Weekends are excluded; partial reset days are prorated. This is a planning guide, not a provider limit." TextWrapping="Wrap" FontSize="10" Foreground="{StaticResource TextSecondary}" Margin="0,6,0,10"/>
+      <TextBlock Text="Refresh every" FontSize="12" Margin="0,15,0,6"/>
+      <ComboBox x:Name="RefreshInterval" Width="150" HorizontalAlignment="Left" AutomationProperties.Name="Refresh interval"/>
+      <Border Height="1" Background="#354255" Margin="0,20,0,16"/>
+      </StackPanel></Expander>
+      <Expander Header="Connection activity" Foreground="#EDF2FA" Margin="0,12,0,0"><TextBlock x:Name="ActivityText" TextWrapping="Wrap" FontSize="11" Foreground="#B2C0D5" Margin="0,10,0,0"/></Expander>
+      <TextBlock x:Name="ErrorText" TextWrapping="Wrap" Foreground="#F3B385" Margin="0,10,0,0" FontSize="11"/>
+    </StackPanel></ScrollViewer>
+    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0"><Button Content="Cancel" Style="{StaticResource ActionButton}" IsCancel="True" Margin="0,0,8,0"/><Button x:Name="SaveButton" Content="Save" Style="{StaticResource ActionButton}" IsDefault="True" Click="Save_Click"/></StackPanel>
+  </Grid>
+</Window>

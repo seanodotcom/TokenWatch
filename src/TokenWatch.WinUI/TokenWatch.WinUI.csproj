@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <RootNamespace>TokenWatch.WinUI</RootNamespace>
+    <AssemblyName>TokenWatch</AssemblyName>
+    <AssemblyName Condition="'$(TokenWatchEdition)' == 'FrameworkDependent'">TokenWatch-framework-dependent</AssemblyName>
+    <Version>0.5.9</Version>
+    <UseWinUI>true</UseWinUI>
+    <WinUISDKReferences>false</WinUISDKReferences>
+    <WindowsPackageType>None</WindowsPackageType>
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <EnableMsixTooling>true</EnableMsixTooling>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <PlatformTarget>x64</PlatformTarget>
+    <Platforms>x64</Platforms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets/TokenWatch.ico</ApplicationIcon>
+    <PublishTrimmed>false</PublishTrimmed>
+    <PublishReadyToRun>false</PublishReadyToRun>
+    <DebugType>none</DebugType>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.6.5" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.2957" />
+    <PackageReference Include="System.Management" Version="8.0.0" />
+    <Compile Include="../TokenWatch/Providers.cs" Link="Providers/Providers.cs" />
+    <Compile Include="../TokenWatch/ClaudeSession.cs" Link="Providers/ClaudeSession.cs" />
+    <Compile Include="../TokenWatch/ClaudeSignIn.cs" Link="Providers/ClaudeSignIn.cs" />
+    <Compile Include="../TokenWatch/AdditionalProviders.cs" Link="Providers/AdditionalProviders.cs" />
+    <Compile Include="../TokenWatch/Settings.cs" Link="Compatibility/Settings.cs" />
+    <Compile Include="../TokenWatch/NativeTrayMenu.cs" Link="Shell/NativeTrayMenu.cs" />
+    <ProjectReference Include="../TokenWatch.Core/TokenWatch.Core.csproj" />
+    <Content Include="Assets/*" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>
