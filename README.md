@@ -2,6 +2,12 @@
 
 A portable Windows x64 tray utility showing subscription quotas for Claude, Codex, Google Antigravity, GitHub Copilot and Cursor. The current release uses WPF and .NET 10. The WinUI 3 implementation is archived under `src/TokenWatch.WinUI`; the current release command is `build.ps1`.
 
+<p align="center">
+  <img src="docs/images/tokenwatch.png" alt="TokenWatch v0.6.1 showing sample Claude, Codex, and Antigravity quotas, reset times, and weekly planning markers" width="410">
+</p>
+
+*Example widget with sample quota data.*
+
 ## Download and run
 
 Download from [GitHub Releases](https://github.com/seanodotcom/TokenWatch/releases/latest): [self-contained Windows x64](https://github.com/seanodotcom/TokenWatch/releases/download/v0.6.1/TokenWatch-v0.6.1-win-x64.zip), [framework-dependent Windows x64](https://github.com/seanodotcom/TokenWatch/releases/download/v0.6.1/TokenWatch-v0.6.1-win-x64-framework-dependent.zip), and [SHA-256 checksums](https://github.com/seanodotcom/TokenWatch/releases/download/v0.6.1/TokenWatch-v0.6.1-SHA256SUMS.txt).
